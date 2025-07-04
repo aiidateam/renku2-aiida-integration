@@ -1,0 +1,6 @@
+name: "base"
+channels:
+  - conda-forge
+dependencies:
+- aiida-core.services=2.2.2
+prefix: "/opt/conda"
