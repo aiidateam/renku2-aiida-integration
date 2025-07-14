@@ -16,9 +16,9 @@ mkdir "$repo_dir"
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$repo_dir
 
-{% if archive_url %}
+if [ -n "$ARCHIVE_URL" ]; then
 
-archive_url="{{ archive_url }}"
+archive_url="$archive_url"
 archive_name="${archive_url#*filename=}"
 archive_path="${repo_dir}/${archive_name}"
 
@@ -35,7 +35,7 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
     --non-interactive \
     --filepath "$archive_path"
 
-{% else %}
+else
 
 # Without archive_url, generate profile using `core.sqlite_dos` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_dos \
@@ -47,7 +47,7 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
     --set-as-default \
     --non-interactive
 
-{% endif %}
+fi
 
 verdi config set warnings.rabbitmq_version False
 rabbitmq-server -detached
