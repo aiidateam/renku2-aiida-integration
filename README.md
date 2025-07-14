@@ -1,8 +1,4 @@
-# {{ name }}
-
-{% if __project_description__ %}
-{{ __project_description__ }}
-{% endif %}
+# Explore AiiDA archives on RenkuLab v2
 
 {% if archive_url %}
 This project comes with a Jupyter notebook for importing and exploring an [AiiDA archive]({{ archive_url }}).
@@ -19,7 +15,7 @@ This project comes with a pre-configured AiiDA environment:
 3.  To see the overall status of the `AiiDA` setup you can open a terminal via the `Launcher` and type `verdi status`. It should look something like this:
 
     ```shell
-    ✔ version:     AiiDA v2.5.1
+    ✔ version:     AiiDA v2.7.0
     ✔ config:      /home/jovyan/work/aiida-final-archive/repo/.aiida
     ✔ profile:     aiida_renku
     ✔ storage:     SqliteZip storage (read-only) [open] @ /home/jovyan/work/{{ name }}/repo/<archive_name>.aiida

@@ -25,7 +25,7 @@ wget -O "$archive_path" "$ARCHIVE_URL"
 
 # With archive_url, generate profile using `core.sqlite_zip` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_zip \
-    --profile $aiida_profile \
+    --profile-name $aiida_profile \
     --first-name "$first_name" \
     --last-name "$last_name" \
     --email "$email" \
@@ -38,7 +38,7 @@ else
 
 # Without archive_url, generate profile using `core.sqlite_dos` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_dos \
-    --profile $aiida_profile \
+    --profile-name $aiida_profile \
     --first-name "$first_name" \
     --last-name "$last_name" \
     --email "$email" \
