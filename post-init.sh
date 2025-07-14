@@ -19,7 +19,10 @@ if [ -n "$ARCHIVE_URL" ]; then
 archive_name="${ARCHIVE_URL#*filename=}"
 archive_path="${repo_dir}/${archive_name}"
 
+echo "WGET -O $archive_path $ARCHIVE_URL"
 wget -O "$archive_path" "$ARCHIVE_URL"
+
+rabbitmq-server -detached
 
 # With archive_url, generate profile using `core.sqlite_zip` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_zip \
@@ -47,7 +50,6 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
 fi
 
 verdi config set warnings.rabbitmq_version False
-rabbitmq-server -detached
 
 # Process README.md to replace placeholders
 # if [ -f "README.md" ]; then
