@@ -12,7 +12,7 @@ repo_dir="${project_dir}/aiida_data"
 mkdir "$repo_dir"
 
 # Export AIIDA_PATH environment variable
-export AIIDA_PATH=$repo_dir
+export AIIDA_PATH=$HOME
 
 if [ -n "$ARCHIVE_URL" ]; then
 
