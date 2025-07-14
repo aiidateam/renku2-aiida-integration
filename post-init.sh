@@ -19,11 +19,12 @@ rabbitmq-server -detached
 
 if [ -n "$archive_url" ]; then
 
-archive_name="${archive_url#*filename=}"
+temp="${archive_url#*/files/}"
+archive_name="${temp%/content*}"
 archive_path="${repo_dir}/${archive_name}"
 
 echo "WGET -O $archive_path $archive_url"
-wget -O "$archive_path" "$archive_url"
+wget -O "$archive_path" @@@ "$archive_url"
 
 # With archive_url, generate profile using `core.sqlite_zip` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_zip \
