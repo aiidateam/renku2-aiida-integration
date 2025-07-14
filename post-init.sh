@@ -50,6 +50,7 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
 fi
 
 verdi config set warnings.rabbitmq_version False
+verdi profile configure-rabbitmq
 
 # Process README.md to replace placeholders
 # if [ -f "README.md" ]; then
