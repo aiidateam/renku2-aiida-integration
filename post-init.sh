@@ -14,16 +14,12 @@ mkdir "$repo_dir"
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$HOME
 
-# Start RMQ
-rabbitmq-server -detached
-
 if [ -n "$archive_url" ]; then
 
 temp="${archive_url#*/files/}"
 archive_name="${temp%/content*}"
 archive_path="${repo_dir}/${archive_name}"
 
-echo "WGET -O $archive_path $archive_url"
 wget -O "$archive_path" "$archive_url"
 
 # With archive_url, generate profile using `core.sqlite_zip` backend
@@ -39,6 +35,11 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
 
 else
 
+# RMQ
+rabbitmq-server -detached
+verdi profile configure-rabbitmq
+verdi config set warnings.rabbitmq_version False
+
 # Without archive_url, generate profile using `core.sqlite_dos` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_dos \
     --profile-name $aiida_profile \
@@ -51,8 +52,6 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
 
 fi
 
-verdi config set warnings.rabbitmq_version False
-verdi profile configure-rabbitmq
 
 # Process README.md to replace placeholders
 # if [ -f "README.md" ]; then
