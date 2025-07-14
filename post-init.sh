@@ -14,6 +14,9 @@ mkdir "$repo_dir"
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$HOME
 
+# Start RMQ
+rabbitmq-server -detached
+
 if [ -n "$archive_url" ]; then
 
 archive_name="${archive_url#*filename=}"
@@ -21,8 +24,6 @@ archive_path="${repo_dir}/${archive_name}"
 
 echo "WGET -O $archive_path $archive_url"
 wget -O "$archive_path" "$archive_url"
-
-rabbitmq-server -detached
 
 # With archive_url, generate profile using `core.sqlite_zip` backend
 verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlite_zip \
