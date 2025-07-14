@@ -31,6 +31,7 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
     --institution $institution \
     --set-as-default \
     --non-interactive \
+    --no-use-rabbitmq \
     --filepath "$archive_path"
 
 else
@@ -51,24 +52,3 @@ verdi profile show $aiida_profile 2> /dev/null || verdi profile setup core.sqlit
     --non-interactive
 
 fi
-
-
-# Process README.md to replace placeholders
-# if [ -f "README.md" ]; then
-#     # Replace archive section placeholder
-#     if [ -n "$archive_url" ]; then
-#         sed -i "s|<!-- ARCHIVE_SECTION -->|This project comes with a Jupyter notebook for importing and exploring an [AiiDA archive]($archive_url).|g" README.md
-#     else
-#         # Remove the placeholder line if no archive_url
-#         sed -i '/<!-- ARCHIVE_SECTION -->/d' README.md
-#     fi
-
-#     # Replace other simple placeholders
-#     if [ -n "$PROJECT_NAME" ]; then
-#         sed -i "s|PROJECT_NAME_PLACEHOLDER|$PROJECT_NAME|g" README.md
-#     fi
-
-#     if [ -n "$PROJECT_DESCRIPTION" ]; then
-#         sed -i "s|PROJECT_DESCRIPTION_PLACEHOLDER|$PROJECT_DESCRIPTION|g" README.md
-#     fi
-# fi
