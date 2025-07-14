@@ -1,1 +1,1 @@
-aiida-core~=2.5
+aiida-core~=2.7

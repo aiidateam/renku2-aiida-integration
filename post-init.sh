@@ -14,13 +14,13 @@ mkdir "$repo_dir"
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$HOME
 
-if [ -n "$ARCHIVE_URL" ]; then
+if [ -n "$archive_url" ]; then
 
-archive_name="${ARCHIVE_URL#*filename=}"
+archive_name="${archive_url#*filename=}"
 archive_path="${repo_dir}/${archive_name}"
 
-echo "WGET -O $archive_path $ARCHIVE_URL"
-wget -O "$archive_path" "$ARCHIVE_URL"
+echo "WGET -O $archive_path $archive_url"
+wget -O "$archive_path" "$archive_url"
 
 rabbitmq-server -detached
 
@@ -55,10 +55,10 @@ verdi profile configure-rabbitmq
 # Process README.md to replace placeholders
 # if [ -f "README.md" ]; then
 #     # Replace archive section placeholder
-#     if [ -n "$ARCHIVE_URL" ]; then
-#         sed -i "s|<!-- ARCHIVE_SECTION -->|This project comes with a Jupyter notebook for importing and exploring an [AiiDA archive]($ARCHIVE_URL).|g" README.md
+#     if [ -n "$archive_url" ]; then
+#         sed -i "s|<!-- ARCHIVE_SECTION -->|This project comes with a Jupyter notebook for importing and exploring an [AiiDA archive]($archive_url).|g" README.md
 #     else
-#         # Remove the placeholder line if no ARCHIVE_URL
+#         # Remove the placeholder line if no archive_url
 #         sed -i '/<!-- ARCHIVE_SECTION -->/d' README.md
 #     fi
 
