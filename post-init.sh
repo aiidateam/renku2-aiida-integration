@@ -1,12 +1,10 @@
 #!/bin/bash
 
 # Set some variables
-read -ra name_array <<< "$(git config user.name | tr -d "'")"
-first_name="${name_array[0]}"
-last_name="${name_array[@]:1}"
-last_name="${last_name// / }"
-email="$(git config user.email)"
-aiida_profile="aiida_renku"
+first_name=aiida
+last_name=renku
+email="aiida@renku2"
+aiida_profile="aiida-renku"
 institution="AiiDA-RenkuLab"
 
 project_dir="$(pwd)"
