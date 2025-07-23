@@ -66,22 +66,6 @@ if [ -n "$archive_url" ]; then
         if python3 "${script_dir}/fetch_mca_metadata.py"; then
             echo "✓ Metadata fetched successfully"
 
-            # Export metadata as environment variables for notebook processing
-            if [ -f "/tmp/mca_metadata.json" ]; then
-                export MCA_METADATA_FILE="/tmp/mca_metadata.json"
-
-                # Extract key values for easy access
-                export MCA_TITLE=$(python3 -c "import json; data=json.load(open('/tmp/mca_metadata.json')); print(data.get('title', ''))")
-                export MCA_DOI=$(python3 -c "import json; data=json.load(open('/tmp/mca_metadata.json')); print(data.get('doi', ''))")
-                export MCA_ENTRY=$(python3 -c "import json; data=json.load(open('/tmp/mca_metadata.json')); print(data.get('mca_entry', ''))")
-                export MCA_ARCHIVE_FILENAME=$(python3 -c "import json; data=json.load(open('/tmp/mca_metadata.json')); print(data.get('archive_filename', ''))")
-                export MCA_AIIDA_PROFILE=$(python3 -c "import json; data=json.load(open('/tmp/mca_metadata.json')); print(data.get('aiida_profile', 'aiida-renku'))")
-
-                echo "✓ Environment variables set"
-                echo "  Title: $MCA_TITLE"
-                echo "  DOI: $MCA_DOI"
-                echo "  Archive: $MCA_ARCHIVE_FILENAME"
-            fi
         else
             echo "⚠ Warning: Failed to fetch metadata, continuing with basic info"
             # Set basic environment variables from URL parsing

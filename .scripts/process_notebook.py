@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 """
 Process the notebook template with metadata and conditional cell visibility
 """
 
 import json
 import os
-import sys
 from jinja2 import Template
 
 
@@ -31,13 +29,19 @@ def process_notebook(template_path, output_path, has_archive_url=False, metadata
     for cell in notebook['cells']:
         cell_tags = cell.get('metadata', {}).get('tags', [])
 
+        # Check if cell has both tags (shared cells)
+        has_both_tags = 'manual-setup' in cell_tags and 'archive-setup' in cell_tags
+        has_manual_only = 'manual-setup' in cell_tags and 'archive-setup' not in cell_tags
+        has_archive_only = 'archive-setup' in cell_tags and 'manual-setup' not in cell_tags
+
+
         if has_archive_url:
-            # Show archive-setup cells, hide manual-setup cells
-            if 'manual-setup' in cell_tags:
+            # Show archive-setup cells and shared cells, hide manual-setup-only cells
+            if has_manual_only:
                 continue
-            elif 'archive-setup' in cell_tags:
+            elif has_archive_only or has_both_tags:
                 # Process Jinja2 templating for archive-setup cells
-                if metadata and cell['cell_type'] == 'markdown':
+                if metadata and cell['cell_type'] == 'markdown' and has_archive_only:
                     template_content = ''.join(cell['source'])
 
                     # Prepare template variables
@@ -58,8 +62,8 @@ def process_notebook(template_path, output_path, has_archive_url=False, metadata
                     # Add newlines back except for last line
                     cell['source'] = [line + '\n' for line in cell['source'][:-1]] + [cell['source'][-1]]
         else:
-            # Show manual-setup cells, hide archive-setup cells
-            if 'archive-setup' in cell_tags:
+            # Show manual-setup cells and shared cells, hide archive-setup-only cells
+            if has_archive_only:
                 continue
 
         filtered_cells.append(cell)
