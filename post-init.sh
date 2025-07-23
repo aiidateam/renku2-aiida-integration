@@ -84,38 +84,6 @@ else
     echo "No archive URL provided - setting up for manual archive import"
 fi
 
-
-# =============================================================================
-# AIIDA BASIC SETUP (WITHOUT ARCHIVE)
-# =============================================================================
-
-echo ""
-echo "Setting up basic AiiDA environment..."
-
-# Only set up a basic profile for manual use - no archive loading during startup
-if [ -z "$archive_url" ]; then
-    echo "Setting up full AiiDA environment for manual archive import..."
-
-    # Create profile if it doesn't exist
-    if ! verdi profile show $aiida_profile >/dev/null 2>&1; then
-        verdi profile setup core.sqlite_dos \
-            --profile-name $aiida_profile \
-            --first-name "$first_name" \
-            --last-name "$last_name" \
-            --email "$email" \
-            --institution "$institution" \
-            --set-as-default \
-            --no-use-rabbitmq \
-            --non-interactive
-        echo "✓ AiiDA profile '$aiida_profile' created"
-    else
-        echo "✓ AiiDA profile '$aiida_profile' already exists"
-    fi
-else
-    echo "Archive mode detected - AiiDA profile will be created when archive is loaded"
-    echo "Profile creation moved to notebook for faster startup"
-fi
-
 # =============================================================================
 # NOTEBOOK PROCESSING
 # =============================================================================
