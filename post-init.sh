@@ -17,26 +17,17 @@ aiida_profile="aiida-renku"
 institution="AiiDA-RenkuLab"
 
 project_dir="$(pwd)"
+script_dir="${project_dir}/.scripts"
 repo_dir="${project_dir}/aiida_data"
 
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$HOME
 
-# =============================================================================
-# DEPENDENCY INSTALLATION
-# =============================================================================
-
-echo "Installing required Python packages..."
-pip install -q jinja2 requests || {
-    echo "Warning: Failed to install some packages, trying alternative method..."
-    python3 -m pip install --user jinja2 requests
-}
-
 # Make scripts executable
 echo "Making scripts executable..."
-chmod +x "${project_dir}/fetch_mca_metadata.py" 2>/dev/null || true
-chmod +x "${project_dir}/session_manager.py" 2>/dev/null || true
-chmod +x "${project_dir}/process_notebook.py" 2>/dev/null || true
+chmod +x "${script_dir}/fetch_mca_metadata.py" 2>/dev/null || true
+chmod +x "${script_dir}/session_manager.py" 2>/dev/null || true
+chmod +x "${script_dir}/process_notebook.py" 2>/dev/null || true
 
 # Create necessary directories
 echo "Creating directories..."
@@ -48,7 +39,7 @@ mkdir -p "/tmp/renku_sessions" 2>/dev/null || true
 # =============================================================================
 
 echo "Checking session status..."
-python3 "${project_dir}/session_manager.py"
+python3 "${script_dir}/session_manager.py"
 
 # =============================================================================
 # METADATA PROCESSING
@@ -152,7 +143,7 @@ fi
 
 echo ""
 echo "Processing notebook template..."
-if python3 "${project_dir}/process_notebook.py"; then
+if python3 "${script_dir}/process_notebook.py"; then
     echo "✓ Notebook processed successfully"
 else
     echo "⚠ Warning: Failed to process notebook template"
