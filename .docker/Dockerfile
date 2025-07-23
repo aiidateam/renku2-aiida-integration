@@ -18,7 +18,7 @@ RUN conda install -c conda-forge aiida-core=2.7.1 -y
 RUN conda clean -y --all && \
     conda env export -n "root"
 
-RUN pip install --upgrade typing_extensions
+RUN pip install --upgrade typing_extensions --no-cache-dir
 
 # RENKU_VERSION determines the version of the renku CLI
 # that will be used in this image. To find the latest version,
