@@ -5,7 +5,7 @@
 set -e
 
 # Default values
-DEFAULT_PORT=8889
+DEFAULT_PORT=8888
 ARCHIVE_URL="https://archive.materialscloud.org/records/yf0rj-w3r97/files/acwf-verification_oxides-verification-PBE-v1-results_quantum_espresso-SSSP-1.3-PBE-precision.aiida"
 
 # Parse arguments
@@ -36,7 +36,7 @@ if command -v netstat >/dev/null 2>&1; then
 fi
 
 echo "Building Docker image..."
-docker build -t mca-test .
+docker build -t mca-test .docker/
 
 echo ""
 echo "Configuration:"
