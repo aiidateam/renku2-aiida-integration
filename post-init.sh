@@ -16,11 +16,9 @@ email="aiida@renku2"
 aiida_profile="aiida-renku"
 institution="AiiDA-RenkuLab"
 
-project_dir="$(pwd)"
+project_dir="$(pwd)/work/renku2-aiida-integration"
 script_dir="${project_dir}/.scripts"
 archive_dir="${project_dir}/data/aiida"
-
-echo "CURRENT PROJECT_DIR: $project_dir"
 
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$HOME
