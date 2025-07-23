@@ -94,13 +94,7 @@ echo "Setting up basic AiiDA environment..."
 
 # Only set up a basic profile for manual use - no archive loading during startup
 if [ -z "$archive_url" ]; then
-    # Standard setup with RabbitMQ for manual use
     echo "Setting up full AiiDA environment for manual archive import..."
-
-    # RMQ
-    rabbitmq-server -detached 2>/dev/null || echo "RabbitMQ may already be running"
-    verdi profile configure-rabbitmq 2>/dev/null || echo "RabbitMQ already configured"
-    verdi config set warnings.rabbitmq_version False 2>/dev/null || true
 
     # Create profile if it doesn't exist
     if ! verdi profile show $aiida_profile >/dev/null 2>&1; then
@@ -111,6 +105,7 @@ if [ -z "$archive_url" ]; then
             --email "$email" \
             --institution "$institution" \
             --set-as-default \
+            --no-use-rabbitmq \
             --non-interactive
         echo "✓ AiiDA profile '$aiida_profile' created"
     else
