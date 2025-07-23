@@ -41,22 +41,29 @@ if [ -n "$archive_url" ]; then
     echo ""
     echo "Archive URL detected: $archive_url"
 
-    # Verify URL format
-    if [[ "$archive_url" != *"/records/"* ]] || [[ "$archive_url" != *"/files/"* ]] || [[ "$archive_url" != *".aiida"* ]]; then
+    # Normalize URL by removing /content suffix if present
+    normalized_url="$archive_url"
+    if [[ "$normalized_url" == *"/content" ]]; then
+        normalized_url="${normalized_url%/content}"
+        echo "Normalized URL (removed /content): $normalized_url"
+    fi
+
+    # Verify URL format using normalized URL
+    if [[ "$normalized_url" != *"/records/"* ]] || [[ "$normalized_url" != *"/files/"* ]] || [[ "$normalized_url" != *".aiida"* ]]; then
         echo "Error: URL does not match expected Materials Cloud Archive format"
         echo "Expected: https://archive.materialscloud.org/records/{record_id}/files/{filename.aiida}"
         echo ""
         echo "Continuing with manual setup mode..."
         unset archive_url
     else
-        # Extract basic info for display
-        if [[ "$archive_url" =~ /files/([^/?]+) ]]; then
+        # Extract basic info for display using normalized URL
+        if [[ "$normalized_url" =~ /files/([^/?]+) ]]; then
             archive_filename="${BASH_REMATCH[1]}"
             archive_filename=$(python3 -c "import urllib.parse; print(urllib.parse.unquote('$archive_filename'))")
             echo "Archive filename: $archive_filename"
         fi
 
-        if [[ "$archive_url" =~ /records/([^/]+)/ ]]; then
+        if [[ "$normalized_url" =~ /records/([^/]+)/ ]]; then
             record_id="${BASH_REMATCH[1]}"
             echo "Record ID: $record_id"
         fi
@@ -76,6 +83,7 @@ if [ -n "$archive_url" ]; then
 else
     echo "No archive URL provided - setting up for manual archive import"
 fi
+
 
 # =============================================================================
 # AIIDA BASIC SETUP (WITHOUT ARCHIVE)

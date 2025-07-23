@@ -77,8 +77,8 @@ def process_notebook(template_path, output_path, has_archive_url=False, metadata
 
 
 def main():
-    template_path = '/home/jovyan/work/notebooks/.explore_template.ipynb'
-    output_path = '/home/jovyan/work/notebooks/explore.ipynb'
+    template_path = '/home/jovyan/work/renku2-aiida-integration/notebooks/.explore_template.ipynb'
+    output_path = '/home/jovyan/work/renku2-aiida-integration/notebooks/explore.ipynb'
 
     # Check if archive_url is set
     archive_url = os.environ.get('archive_url')

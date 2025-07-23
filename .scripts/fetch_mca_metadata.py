@@ -117,6 +117,13 @@ def get_archive_filename_from_url(archive_url):
         print(f"Error extracting filename: {e}")
         return None
 
+def normalize_archive_url(archive_url):
+    """Normalize archive URL by removing /content suffix and handling different URL formats"""
+    # Remove trailing /content if present
+    if archive_url.endswith('/content'):
+        archive_url = archive_url.rstrip('/content')
+
+    return archive_url
 
 def main():
     archive_url = os.environ.get('archive_url')
@@ -124,6 +131,9 @@ def main():
     if not archive_url:
         print("No archive_url environment variable found")
         sys.exit(1)
+
+    # Normalize the URL (remove /content suffix)
+    archive_url = normalize_archive_url(archive_url)
 
     if not archive_url.endswith('.aiida'):
         print("archive_url does not point to an .aiida file")
