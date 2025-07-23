@@ -20,6 +20,8 @@ project_dir="$(pwd)"
 script_dir="${project_dir}/.scripts"
 archive_dir="${project_dir}/data/aiida"
 
+echo "CURRENT PROJECT_DIR: $project_dir"
+
 # Export AIIDA_PATH environment variable
 export AIIDA_PATH=$HOME
 
