@@ -136,16 +136,6 @@ fi
 echo ""
 echo "===== Setup Complete ====="
 echo ""
-echo "Session Information:"
-echo "  Mode: $([ -n "$archive_url" ] && echo "Archive Mode" || echo "Manual Import Mode")"
-echo "  Archive URL: ${archive_url:-'None (manual setup)'}"
-if [ -n "$archive_url" ]; then
-    echo "  Archive File: ${MCA_ARCHIVE_FILENAME:-'Unknown'}"
-    echo "  Dataset: ${MCA_TITLE:-'Unknown'}"
-    echo "  DOI: ${MCA_DOI:-'Not available'}"
-fi
-echo "  AiiDA Profile: ${MCA_AIIDA_PROFILE:-$aiida_profile}"
-echo ""
 echo "Ready to explore! Open notebooks/explore.ipynb to get started."
 echo ""
 if [ -n "$archive_url" ]; then
