@@ -9,13 +9,6 @@ set -e
 
 echo "===== AiiDA-RenkuLab Session Setup ====="
 
-# Set some variables
-first_name=aiida
-last_name=renku
-email="aiida@renku2"
-aiida_profile="aiida-renku"
-institution="AiiDA-RenkuLab"
-
 project_dir="$(pwd)/work/renku2-aiida-integration"
 script_dir="${project_dir}/.scripts"
 archive_dir="${project_dir}/data/aiida"
