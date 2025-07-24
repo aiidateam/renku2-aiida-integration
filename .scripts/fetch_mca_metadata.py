@@ -128,7 +128,7 @@ def normalize_archive_url(archive_url):
     suffixes_to_remove = ['/content', '/download', '?download=1', '?dl=1']
     for suffix in suffixes_to_remove:
         if archive_url.endswith(suffix):
-            archive_url = archive_url.rstrip(suffix)
+            archive_url = archive_url[:-len(suffix)]
 
     # Remove trailing slashes
     archive_url = archive_url.rstrip('/')
