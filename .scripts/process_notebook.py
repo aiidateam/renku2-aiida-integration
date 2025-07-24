@@ -16,6 +16,26 @@ def load_metadata():
     return None
 
 
+def load_session_conflict_notice():
+    """Load session conflict notice if it exists"""
+    notice_file = '/tmp/session_conflict_notice.md'
+    if os.path.exists(notice_file):
+        with open(notice_file, 'r') as f:
+            return f.read()
+    return None
+
+
+def create_conflict_warning_cell(conflict_notice):
+    """Create a markdown cell with the session conflict warning"""
+    return {
+        "cell_type": "markdown",
+        "metadata": {
+            "tags": ["session-conflict-warning"]
+        },
+        "source": conflict_notice.split('\n')
+    }
+
+
 def process_notebook(template_path, output_path, has_archive_url=False, metadata=None):
     """Process notebook template with conditional cell visibility and metadata substitution"""
 
@@ -23,8 +43,60 @@ def process_notebook(template_path, output_path, has_archive_url=False, metadata
     with open(template_path, 'r') as f:
         notebook = json.load(f)
 
+    # Check for session conflict notice
+    conflict_notice = load_session_conflict_notice()
+
     # Filter cells based on archive_url presence
     filtered_cells = []
+
+    # Add session conflict warning at the top if it exists
+    if conflict_notice:
+        warning_cell = create_conflict_warning_cell(conflict_notice)
+        filtered_cells.append(warning_cell)
+
+        # Also add a code cell to check if user wants to switch archives
+        switch_cell = {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {
+                "tags": ["session-conflict-action"],
+                "jupyter": {"source_hidden": True}
+            },
+            "outputs": [],
+            "source": [
+                "# Session Conflict Resolution Helper\n",
+                "import os\n",
+                "import subprocess\n",
+                "\n",
+                "def clear_session_conflict():\n",
+                "    \"\"\"Clear the session conflict warning files\"\"\"\n",
+                "    files_to_remove = ['/tmp/session_warning.txt', '/tmp/session_conflict_notice.md']\n",
+                "    for file_path in files_to_remove:\n",
+                "        if os.path.exists(file_path):\n",
+                "            os.remove(file_path)\n",
+                "            print(f\"Removed {file_path}\")\n",
+                "    print(\"\\n✅ Session conflict cleared. Refresh the notebook to remove this warning.\")\n",
+                "\n",
+                "def show_current_session_info():\n",
+                "    \"\"\"Show information about the current session\"\"\"\n",
+                "    current_archive = os.environ.get('archive_url', 'Not set')\n",
+                "    print(f\"Current session archive URL: {current_archive}\")\n",
+                "    \n",
+                "    # Check if there's cached session info\n",
+                "    session_file = '/tmp/renku_sessions/current_session.json'\n",
+                "    if os.path.exists(session_file):\n",
+                "        import json\n",
+                "        with open(session_file, 'r') as f:\n",
+                "            session_data = json.load(f)\n",
+                "        print(f\"Cached session archive URL: {session_data.get('archive_url', 'Not found')}\")\n",
+                "        print(f\"Session started: {session_data.get('timestamp', 'Unknown')}\")\n",
+                "\n",
+                "# Uncomment and run ONE of these functions:\n",
+                "# show_current_session_info()  # Show current session details\n",
+                "# clear_session_conflict()     # Clear the conflict warning (if you want to continue with current archive)\n"
+            ]
+        }
+        filtered_cells.append(switch_cell)
 
     for cell in notebook['cells']:
         cell_tags = cell.get('metadata', {}).get('tags', [])
@@ -33,7 +105,6 @@ def process_notebook(template_path, output_path, has_archive_url=False, metadata
         has_both_tags = 'manual-setup' in cell_tags and 'archive-setup' in cell_tags
         has_manual_only = 'manual-setup' in cell_tags and 'archive-setup' not in cell_tags
         has_archive_only = 'archive-setup' in cell_tags and 'manual-setup' not in cell_tags
-
 
         if has_archive_url:
             # Show archive-setup cells and shared cells, hide manual-setup-only cells
@@ -96,10 +167,14 @@ def main():
 
     print(f"Processed notebook saved to: {output_path}")
     print(f"Archive URL present: {has_archive_url}")
+
+    # Check for session conflicts
+    if os.path.exists('/tmp/session_warning.txt'):
+        print("⚠️  Session conflict detected - warning added to notebook")
+
     if metadata:
         print(f"Loaded metadata for: {metadata.get('title', 'Unknown')}")
 
 
 if __name__ == '__main__':
     main()
-
