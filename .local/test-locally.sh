@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Simple script to test MCA integration locally
+# Simple script to test MCA integration locally with correct path mapping
 
 set -e
 
@@ -47,19 +47,37 @@ echo "Jupyter will be available at: http://localhost:$PORT"
 echo "Press Ctrl+C to stop"
 echo ""
 
-# Run the container - simplified approach without user switching
+# Create a temporary work directory structure that mirrors Renku
+TEMP_WORK_DIR=$(mktemp -d)
+PROJECT_NAME="renku2-aiida-integration"
+
+# Set up the directory structure to match Renku exactly
+mkdir -p "$TEMP_WORK_DIR/$PROJECT_NAME"
+
+# Copy project files to the temporary structure
+echo "Setting up Renku-like directory structure..."
+cp -r . "$TEMP_WORK_DIR/$PROJECT_NAME/"
+
+# Run the container with the correct path structure
 docker run -it --rm \
   --name "mca-test-$PORT" \
   -p "$PORT:8888" \
-  -v "$(pwd):/home/jovyan/work" \
+  -v "$TEMP_WORK_DIR:/home/jovyan/work" \
   -e "archive_url=$ARCHIVE_URL" \
   -e "RENKU_USERNAME=$USER" \
   -e "HOME=/home/jovyan" \
-  --workdir /home/jovyan/work \
+  -e "RENKU_PROJECT_NAME=$PROJECT_NAME" \
+  --workdir "/home/jovyan/work/$PROJECT_NAME" \
   mca-test \
   bash -c "
-    # Run initialization and start Jupyter (disable auth properly)
+    echo 'Starting in directory: \$(pwd)'
+    echo 'Project structure:'
+    ls -la
+    echo ''
+    echo 'Running post-init.sh...'
     bash post-init.sh &&
+    echo ''
+    echo 'Starting Jupyter server...'
     jupyter server \
       --ServerApp.ip=0.0.0.0 \
       --ServerApp.port=8888 \
@@ -70,5 +88,14 @@ docker run -it --rm \
       --ServerApp.allow_root=True \
       --ServerApp.allow_origin='*' \
       --ContentsManager.allow_hidden=True \
-      --IdentityProvider.token=''
-  "
+      --IdentityProvider.token='' \
+      --ServerApp.root_dir='/home/jovyan/work'
+  " || {
+    echo "Container failed, cleaning up..."
+    rm -rf "$TEMP_WORK_DIR"
+    exit 1
+  }
+
+# Cleanup
+echo "Cleaning up temporary directory..."
+rm -rf "$TEMP_WORK_DIR"
