@@ -147,16 +147,16 @@ def main():
     archive_url = get_archive_url()
 
     # Normalize the URL (remove /content suffix)
-    archive_url = normalize_archive_url(archive_url)
+    normalized_url = normalize_archive_url(archive_url)
 
-    if not archive_url.endswith(".aiida"):
+    if not normalized_url.endswith(".aiida"):
         print("archive_url does not point to an .aiida file")
         sys.exit(1)
 
     # Extract record ID from URL
-    record_id = extract_record_id_from_url(archive_url)
+    record_id = extract_record_id_from_url(normalized_url)
     if not record_id:
-        print(f"Could not extract record ID from URL: {archive_url}")
+        print(f"Could not extract record ID from URL: {normalized_url}")
         sys.exit(1)
 
     print(f"Fetching metadata for record: {record_id}")
@@ -168,10 +168,13 @@ def main():
         sys.exit(1)
 
     # Add archive-specific information
-    archive_filename = get_archive_filename_from_url(archive_url)
+    archive_filename = get_archive_filename_from_url(normalized_url)
     if archive_filename:
         metadata["archive_filename"] = archive_filename
         metadata["aiida_profile"] = os.path.splitext(archive_filename)[0]  # Remove .aiida extension
+
+    # ADD THE MISSING archive_url - THIS IS THE KEY FIX!
+    metadata["archive_url"] = normalized_url
 
     # Save metadata to JSON file
     output_file = "/tmp/mca_metadata.json"
@@ -183,6 +186,7 @@ def main():
     print(f"DOI: {metadata['doi']}")
     print(f"MCA Entry: {metadata['mca_entry']}")
     print(f"Archive file: {metadata.get('archive_filename', 'Unknown')}")
+    print(f"Archive URL: {metadata['archive_url']}")
 
 
 if __name__ == "__main__":
