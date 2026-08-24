@@ -4,6 +4,8 @@ Process the notebook template with metadata and conditional cell visibility
 
 import json
 import os
+from pathlib import Path
+
 from jinja2 import Template
 
 
@@ -77,8 +79,9 @@ def process_notebook(template_path, output_path, has_archive_url=False, metadata
 
 
 def main():
-    template_path = '/home/jovyan/work/renku2-aiida-integration/notebooks/.explore_template.ipynb'
-    output_path = '/home/jovyan/work/renku2-aiida-integration/notebooks/explore.ipynb'
+    notebook_dir = Path(__file__).resolve().parent.parent / 'notebooks'
+    template_path = notebook_dir / '.explore_template.ipynb'
+    output_path = notebook_dir / 'explore.ipynb'
 
     # Check if archive_url is set
     archive_url = os.environ.get('archive_url')

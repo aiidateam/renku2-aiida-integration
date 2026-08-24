@@ -58,7 +58,8 @@ mkdir -p "$TEMP_WORK_DIR/$PROJECT_NAME"
 echo "Setting up Renku-like directory structure..."
 cp -r . "$TEMP_WORK_DIR/$PROJECT_NAME/"
 
-# Run the container with the correct path structure
+# Run the container the way the Renku session launcher does: the session working
+# directory is the mount directory, and the entry point is startup.sh.
 docker run -it --rm \
   --name "mca-test-$PORT" \
   -p "$PORT:8888" \
@@ -67,29 +68,17 @@ docker run -it --rm \
   -e "RENKU_USERNAME=$USER" \
   -e "HOME=/home/jovyan" \
   -e "RENKU_PROJECT_NAME=$PROJECT_NAME" \
-  --workdir "/home/jovyan/work/$PROJECT_NAME" \
+  -e "RENKU_BASE_URL_PATH=/" \
+  --workdir "/home/jovyan/work" \
+  --user 1000:1000 \
   mca-test \
-  bash -c "
-    echo 'Starting in directory: \$(pwd)'
+  sh -c "
+    echo \"Starting in directory: \$(pwd)\"
     echo 'Project structure:'
     ls -la
     echo ''
-    echo 'Running post-init.sh...'
-    bash post-init.sh &&
-    echo ''
-    echo 'Starting Jupyter server...'
-    jupyter server \
-      --ServerApp.ip=0.0.0.0 \
-      --ServerApp.port=8888 \
-      --ServerApp.token='' \
-      --ServerApp.password='' \
-      --ServerApp.disable_check_xsrf=True \
-      --ServerApp.allow_remote_access=True \
-      --ServerApp.allow_root=True \
-      --ServerApp.allow_origin='*' \
-      --ContentsManager.allow_hidden=True \
-      --IdentityProvider.token='' \
-      --ServerApp.root_dir='/home/jovyan/work'
+    echo 'Running startup.sh...'
+    exec sh '/home/jovyan/work/$PROJECT_NAME/startup.sh'
   " || {
     echo "Container failed, cleaning up..."
     rm -rf "$TEMP_WORK_DIR"

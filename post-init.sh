@@ -9,7 +9,9 @@ set -e
 
 echo "===== AiiDA-RenkuLab Session Setup ====="
 
-project_dir="$(pwd)/work/renku2-aiida-integration"
+# Renku controls the container's working directory, so resolve everything
+# relative to this script instead of the current directory.
+project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 script_dir="${project_dir}/.scripts"
 archive_dir="${project_dir}/data/aiida"
 
@@ -92,6 +94,20 @@ else
         cp "${project_dir}/notebooks/.explore_template.ipynb" "${project_dir}/notebooks/explore.ipynb"
         echo "✓ Used template notebook as fallback"
     fi
+fi
+
+notebook="${project_dir}/notebooks/explore.ipynb"
+if [ ! -f "$notebook" ]; then
+    echo ""
+    echo "===== Setup Failed ====="
+    echo ""
+    echo "The exploration notebook could not be created at:"
+    echo "  $notebook"
+    echo ""
+    echo "The session will still start, but opening the notebook will fail."
+    echo "Please report this at https://github.com/aiidateam/renku2-aiida-integration/issues"
+    echo ""
+    exit 1
 fi
 
 echo ""
